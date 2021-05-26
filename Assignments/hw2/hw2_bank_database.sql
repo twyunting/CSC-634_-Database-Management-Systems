@@ -113,7 +113,11 @@ insert into employee values('Sato', 'Austin', 1600);
 
 # Retrieval Queries
 ## 1. Find all loan number for loans made at the Perryridge branch with loan amounts greater than $1100.
+select loan_number from loan
+where branch_name = "Perryridge" and amount > 1100;
+
 ## 2. Find the loan number of those loans with loan amounts between $1,000 and $1,500 (that is, >=$1,000 and <=$1,500)
+
 ## 3. Find the names of all branches that have greater assets than some branch located in Brooklyn.
 ## 4. Find the customer names and their loan numbers for all customers having a loan at some branch.
 ## 5. Find all customers who have a loan, an account, or both:
