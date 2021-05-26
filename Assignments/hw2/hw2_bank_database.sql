@@ -1,28 +1,43 @@
-create database AU_CSC_634;
-use AU_CSC_634;
-
 # create the Bank database
 create database if not exists Bank;
 use Bank;
 
-# create tables
-create table if not exists account 
-(account_number char(5) not null primary key, branch_name varchar(10), balance double);
-create table if not exists branch 
-(branch_name varchar(10) not null primary key, branch_city varchar(10), assets double);
-create table if not exists customer
-(customer_name varchar(20) not null primary key, customer_street varchar(20), customer_city varchar(10));
-create table if not exists loan
-(loan_number varchar(5) not null primary key, branch_name varchar(10), amount double);
-create table if not exists borrower
-(customer_name varchar(20) not null, loan_number varchar(5) not null, 
-primary key(customer_name, loan_number));
-create table if not exists depositor
-(customer_name varchar(20) not null, account_number char(5) not null, 
-primary key(customer_name, account_number));
-create table if not exists employee
-(employee_name varchar(20) not null, branch_name varchar(10) not null, salary double, 
-primary key(employee_name,branch_name)); 
+CREATE TABLE IF NOT EXISTS account (
+    account_number CHAR(5) NOT NULL PRIMARY KEY,
+    branch_name VARCHAR(10),
+    balance DOUBLE
+);
+CREATE TABLE IF NOT EXISTS branch (
+    branch_name VARCHAR(10) NOT NULL PRIMARY KEY,
+    branch_city VARCHAR(10),
+    assets DOUBLE
+);
+CREATE TABLE IF NOT EXISTS customer (
+    customer_name VARCHAR(20) NOT NULL PRIMARY KEY,
+    customer_street VARCHAR(20),
+    customer_city VARCHAR(10)
+);
+CREATE TABLE IF NOT EXISTS loan (
+    loan_number VARCHAR(5) NOT NULL PRIMARY KEY,
+    branch_name VARCHAR(10),
+    amount DOUBLE
+);
+CREATE TABLE IF NOT EXISTS borrower (
+    customer_name VARCHAR(20) NOT NULL,
+    loan_number VARCHAR(5) NOT NULL,
+    PRIMARY KEY (customer_name , loan_number)
+);
+CREATE TABLE IF NOT EXISTS depositor (
+    customer_name VARCHAR(20) NOT NULL,
+    account_number CHAR(5) NOT NULL,
+    PRIMARY KEY (customer_name , account_number)
+);
+CREATE TABLE IF NOT EXISTS employee (
+    employee_name VARCHAR(20) NOT NULL,
+    branch_name VARCHAR(10) NOT NULL,
+    salary DOUBLE,
+    PRIMARY KEY (employee_name , branch_name)
+); 
 
 # populate the tables
 ## account 
@@ -96,6 +111,17 @@ insert into employee values('Peterson', 'Downtown', 2500);
 insert into employee values('Rao', 'Austin', 1500);
 insert into employee values('Sato', 'Austin', 1600);
 
-
 # Retrieval Queries
 ## 1. Find all loan number for loans made at the Perryridge branch with loan amounts greater than $1100.
+## 2. Find the loan number of those loans with loan amounts between $1,000 and $1,500 (that is, >=$1,000 and <=$1,500)
+## 3. Find the names of all branches that have greater assets than some branch located in Brooklyn.
+## 4. Find the customer names and their loan numbers for all customers having a loan at some branch.
+## 5. Find all customers who have a loan, an account, or both:
+## 6. Find all customers who have an account but no loan. (no minus operator provided in mysql)
+## 7. Find the number of depositors for each branch.
+## 8. Find the names of all branches where the average account balance is more than $500.
+## 9. Find all customers who have both an account and a loan at the bank.
+## 10. Find all customers who have a loan at the bank but do not have an account at the bank
+## 11. Find the names of all branches that have greater assets than all branches located in Horseneck. (using both non-nested and nested select statement)
+## 12. 1 query of your choice involving aggregate functions
+## 13. 1 query of your choice involving group by feature.
