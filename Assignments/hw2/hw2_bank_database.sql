@@ -117,9 +117,17 @@ select loan_number from loan
 where branch_name = "Perryridge" and amount > 1100;
 
 ## 2. Find the loan number of those loans with loan amounts between $1,000 and $1,500 (that is, >=$1,000 and <=$1,500)
+select loan_number from loan
+where amount between 1000 and 1500;
 
 ## 3. Find the names of all branches that have greater assets than some branch located in Brooklyn.
+select tb1.branch_name
+from branch tb1 join branch tb2
+where tb1.assets > tb2.assets and tb2.branch_city = "Brooklyn";
+
 ## 4. Find the customer names and their loan numbers for all customers having a loan at some branch.
+
+
 ## 5. Find all customers who have a loan, an account, or both:
 ## 6. Find all customers who have an account but no loan. (no minus operator provided in mysql)
 ## 7. Find the number of depositors for each branch.
