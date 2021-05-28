@@ -129,11 +129,26 @@ select distinct B.customer_name, B.loan_number from borrower as B inner join loa
 on B.loan_number = L.loan_number;
 
 ## 5. Find all customers who have a loan, an account, or both:
+select customer_name from depositor
+union
+select customer_name from borrower;
+# reference: https://www.mysqltutorial.org/sql-union-mysql.aspx
 
 ## 6. Find all customers who have an account but no loan. (no minus operator provided in mysql)
+select distinct C.customer_name from customer as C 
+where C.customer_name not in (select B.customer_name from borrower as B);
+
 ## 7. Find the number of depositors for each branch.
+select branch_name, count(distinct customer_name)
+from depositor, account
+where depositor.account_number = account.account_number
+group by branch_name;
+
 ## 8. Find the names of all branches where the average account balance is more than $500.
+
+
 ## 9. Find all customers who have both an account and a loan at the bank.
+
 ## 10. Find all customers who have a loan at the bank but do not have an account at the bank
 ## 11. Find the names of all branches that have greater assets than all branches located in Horseneck. (using both non-nested and nested select statement)
 ## 12. 1 query of your choice involving aggregate functions
