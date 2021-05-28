@@ -145,11 +145,18 @@ where depositor.account_number = account.account_number
 group by branch_name;
 
 ## 8. Find the names of all branches where the average account balance is more than $500.
-
+select branch_name, avg(balance) from account
+group by branch_name 
+having avg(balance) > 500;
 
 ## 9. Find all customers who have both an account and a loan at the bank.
+select distinct customer_name from borrower  
+where customer_name in (select customer_name from depositor);
 
 ## 10. Find all customers who have a loan at the bank but do not have an account at the bank
+select distinct customer_name from borrower 
+where customer_name not in (select customer_name from depositor);
+
 ## 11. Find the names of all branches that have greater assets than all branches located in Horseneck. (using both non-nested and nested select statement)
 ## 12. 1 query of your choice involving aggregate functions
 ## 13. 1 query of your choice involving group by feature.
