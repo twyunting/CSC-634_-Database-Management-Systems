@@ -158,5 +158,19 @@ select distinct customer_name from borrower
 where customer_name not in (select customer_name from depositor);
 
 ## 11. Find the names of all branches that have greater assets than all branches located in Horseneck. (using both non-nested and nested select statement)
+
+### non-nested 
+select branch_name from branch 
+where assets > all (select assets from branch where branch_city = "Horseneck");
+### nested
+select branch_name from branch 
+where assets > all (
+select assets from branch where branch_city in (
+select branch_city from branch where branch_city = "Horseneck"
+)
+);
+# reference: https://www.w3schools.com/sql/sql_any_all.asp
+
 ## 12. 1 query of your choice involving aggregate functions
+
 ## 13. 1 query of your choice involving group by feature.
