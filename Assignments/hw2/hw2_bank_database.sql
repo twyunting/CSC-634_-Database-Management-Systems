@@ -172,7 +172,7 @@ select branch_city from branch where branch_city = "Horseneck"
 # reference: https://www.w3schools.com/sql/sql_any_all.asp
 
 ## 12. 1 query of your choice involving aggregate functions
-# Find the brance_name in loan table whose total amount greater than 1000
+# Find the brance_name in loan table whose total amount greater than 1000 (using aggregate function sum()).
 select branch_name , sum(amount) from loan 
 group by branch_name
 having sum(amount) > 1000;
@@ -184,15 +184,28 @@ group by branch_name ;
 
 # Insert Queries
 ## Do 2 insert queries requiring multiple records insertion as follow:
-
 ## 1. Create a HighLoan table with loan amount >=1500.
+create table HighLoan select * from loan
+where amount >= 1500;
+select * from HighLoan;
 
 ## 2. Create a HighSalaryEmployee table with employee having salary more than 2000.
+create table HighSalaryEmployee select * from employee
+where salary > 2000;
+select * from HighSalaryEmployee;
+
 ## 3. 1 more query (meaningful) of your choice on any table.
+
 
 # Update Queries
 ## 1. Increase all accounts with balances over $800 by 7%, all other accounts receive 8%.
+update account
+set balance = balance * 1.07 where balance > 800;
+update account
+set balance = balance * 1.08 where balance <= 800;
+
 ## 2. Do 2 update queries, each involving 2 tables.
+
 ## 3. 1 more update query of your choice on any table.
 
 # Delete Queries
@@ -201,7 +214,7 @@ group by branch_name ;
 ## 3. 1 more delete query of your choice from any table.
 
 # Views Queries
-## 1. A view consisting of branches and their customers
+## 1. A view consisting of branches and their customers.
 ## 2. Create a view of HQEmployee who work in downtown branch.
 ## 3. Do one insert, delete, update, and select queries on HQEmployee view.
 
