@@ -120,23 +120,32 @@ where branch_name = "Perryridge" and amount > 1100;
 select loan_number from loan
 where amount between 1000 and 1500;
 
+
 ## 3. Find the names of all branches that have greater assets than some branch located in Brooklyn.
-select tb1.branch_name from branch tb1 join branch tb2
+select distinct tb1.branch_name from branch tb1 join branch tb2
 where tb1.assets > tb2.assets and tb2.branch_city = "Brooklyn";
+
+## second solution
+SELECT branch_name FROM branch
+WHERE assets > ANY(
+SELECT assets
+FROM branch
+WHERE branch_city = 'Brooklyn'
+);
 
 ## 4. Find the customer names and their loan numbers for all customers having a loan at some branch.
 select distinct B.customer_name, B.loan_number from borrower as B inner join loan as L 
 on B.loan_number = L.loan_number;
 
 ## 5. Find all customers who have a loan, an account, or both:
-select customer_name from depositor
+(select customer_name from depositor)
 union
-select customer_name from borrower;
+(select customer_name from borrower);
 # reference: https://www.mysqltutorial.org/sql-union-mysql.aspx
 
 ## 6. Find all customers who have an account but no loan. (no minus operator provided in mysql)
-select distinct C.customer_name from customer as C 
-where C.customer_name not in (select B.customer_name from borrower as B);
+select distinct customer_name from depositor
+where customer_name not in (select customer_name from borrower);
 
 ## 7. Find the number of depositors for each branch.
 select branch_name, count(distinct customer_name)
@@ -158,7 +167,6 @@ select distinct customer_name from borrower
 where customer_name not in (select customer_name from depositor);
 
 ## 11. Find the names of all branches that have greater assets than all branches located in Horseneck. (using both non-nested and nested select statement)
-
 ### non-nested 
 select branch_name from branch 
 where assets > all (select assets from branch where branch_city = "Horseneck");
@@ -173,14 +181,21 @@ select branch_city from branch where branch_city = "Horseneck"
 
 ## 12. 1 query of your choice involving aggregate functions
 # Find the brance_name in loan table whose total amount greater than 1000 (using aggregate function sum()).
+# Note: SQL Aggregate Functions
+# a)AVG – calculates the average of a set of values.
+# b)COUNT – counts rows in a specified table or view.
+# c)MIN – gets the minimum value in a set of values.
+# d)MAX – gets the maximum value in a set of values.
+# e)SUM – calculates the sum of values.
+
 select branch_name , sum(amount) from loan 
 group by branch_name
 having sum(amount) > 1000;
 
 ## 13. 1 query of your choice involving group by feature.
-#  Add up the account of each branch_name in account table
+#  Add up the count of each branch_name in account table
 select branch_name, count(*) from account
-group by branch_name ;
+group by branch_name;
 
 # Insert Queries
 ## Do 2 insert queries requiring multiple records insertion as follow:
@@ -195,15 +210,18 @@ where salary > 2000;
 select * from HighSalaryEmployee;
 
 ## 3. 1 more query (meaningful) of your choice on any table.
-
+# Find all branch_name who have a HighLoan, a HighSalaryEmployee, or both?
+select branch_name from HighLoan
+union
+select branch_name from HighSalaryEmployee;
 
 # Update Queries
 ## 1. Increase all accounts with balances over $800 by 7%, all other accounts receive 8%.
 update account
-set balance = balance * 1.07 where balance > 800;
+set balance = balance * 1.00 where balance > 800;
 update account
-set balance = balance * 1.08 where balance <= 800;
-
+set balance = balance * 1.00 where balance <= 800;
+select * from account
 ## 2. Do 2 update queries, each involving 2 tables.
 
 ## 3. 1 more update query of your choice on any table.
