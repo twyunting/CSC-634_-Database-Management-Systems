@@ -205,31 +205,91 @@ where amount >= 1500;
 select * from HighLoan;
 
 ## 2. Create a HighSalaryEmployee table with employee having salary more than 2000.
-create table HighSalaryEmployee select * from employee
+create table HighSalaryEmployee as select * from employee
 where salary > 2000;
 select * from HighSalaryEmployee;
 
 ## 3. 1 more query (meaningful) of your choice on any table.
-# Find all branch_name who have a HighLoan, a HighSalaryEmployee, or both?
+# Find all branch_name who have a HighLoan, a HighSalaryEmployee, or both, then save this table as HighBranch.
+create table HighBranch
 select branch_name from HighLoan
 union
 select branch_name from HighSalaryEmployee;
+select * from HighBranch;
 
-# Update Queries
+# Update Queriesemployee
 ## 1. Increase all accounts with balances over $800 by 7%, all other accounts receive 8%.
+# before the query
+select * from account;
+# after the query
 update account
-set balance = balance * 1.00 where balance > 800;
+set balance = balance * 1.07 where balance > 800;
 update account
-set balance = balance * 1.00 where balance <= 800;
-select * from account
+set balance = balance * 1.08 where balance <= 800;
+select * from account;
+
 ## 2. Do 2 update queries, each involving 2 tables.
+# First: If employees are located in a high-loan area, their salary should be increased by 20%.
+# before the query
+select * from employee;
+# after the query
+update employee 
+set salary = salary * 1.2 where branch_name in (select branch_name from HighLoan);
+select * from employee;
+# Second: If employees are not located in a high-loan area, their salary should be decreased by 10%.
+# before the query
+select * from employee;
+# after the query
+update employee 
+set salary = salary * 0.9 where branch_name not in (select branch_name from HighLoan);
+select * from employee;
 
 ## 3. 1 more update query of your choice on any table.
+# If the loan amount is greater than $1,000, the loan amount will be increased by 5%.
+# before the query
+select * from loan;
+# after the query
+update loan
+set amount = amount + amount * 0.05 where amount > 1000;
+select * from loan;
 
 # Delete Queries
 ## 1. Delete the record of all accounts with balances below the average at the bank.
-## 2. Do 2 update queries, each involving 2 tables.
+# before the query
+select * from account;
+# after the query
+delete from account
+where balance < (select * from(select avg(balance) from account)
+as tmp);
+select * from account;
+# reference: https://stackoverflow.com/questions/5816840/delete-i-cant-specify-target-table/5816887
+
+## 2. Do 2 delete queries, each involving 2 tables.
+# first: delete the employee name which branch_name is in loan table.
+# before the query
+select * from employee;
+# after the query
+delete from employee
+where branch_name in (select distinct branch_name from loan);
+select * from employee;
+
+# second: Remove the customer name from the depositor table that is NOT in the borrower table.
+# before the query
+select * from depositor;
+# after the query
+delete from depositor
+where customer_name not in (select distinct customer_name from borrower);
+select * from depositor;
+
 ## 3. 1 more delete query of your choice from any table.
+# If an employee's salary is less than $1,400, their name should be removed.
+# before the query
+select * from employee;
+# after the query
+delete from employee
+where salary < 1400;
+select * from employee;
+
 
 # Views Queries
 ## 1. A view consisting of branches and their customers.
