@@ -290,7 +290,6 @@ delete from employee
 where salary < 1400;
 select * from employee;
 
-
 # Views Queries
 ## 1. A view consisting of branches and their customers.
 ## 2. Create a view of HQEmployee who work in downtown branch.
