@@ -292,8 +292,41 @@ select * from employee;
 
 # Views Queries
 ## 1. A view consisting of branches and their customers.
+create view customerView as
+(select branch_name, customer_name
+from depositor D, account A
+where D.account_number = A.account_number)
+union
+(select branch_name, customer_name
+from borrower B, loan L
+where B.loan_number = L.loan_number);
+select * from customerView;
+
 ## 2. Create a view of HQEmployee who work in downtown branch.
+# check the employee entity first
+select * from employee;
+# create a view as HQEmployee
+create view HQEmployee as
+select employee_name, branch_name from employee
+where branch_name = "Downtown";
+select * from HQEmployee;
+
 ## 3. Do one insert, delete, update, and select queries on HQEmployee view.
+# insert
+insert into HQEmployee (employee_name, branch_name) values ("Yunting", "Downtown");
+insert into HQEmployee values ("Guzman", "Downtown");
+select * from HQEmployee;
+# delete 
+delete from HQEmployee where employee_name = "Guzman";
+select * from HQEmployee;
+# update 
+update HQEmployee
+set employee_name = "Yunting Chiu"
+where branch_name = "Downtown";
+select * from HQEmployee;
+# select
+select employee_name from HQEmployee
+where branch_name is not null;
 
 # Complex Queries: provide results
 ## 1. 1 select query involving 3 tables
