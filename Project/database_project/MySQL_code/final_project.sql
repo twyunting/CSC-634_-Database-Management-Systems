@@ -50,7 +50,7 @@ subtotal double,
 PRIMARY KEY (ASIN, order_id) 
 );
 
-############################################# PPOPLATING THE TABLES #########################################################
+############################################# POPULATING THE TABLES #########################################################
 # Store
 insert into Store values(1, 'Cable Master', '(617)-3332634', 'USA', 'Washingtion DC', '4400 Massachusetts Ave NW, Washington, DC 20016', 20006);
 insert into Store values(2, 'CC Connector', '(520)-1234567', 'USA', 'New York City', '20 W 34th St, New York, NY 10001', 10001);
@@ -89,4 +89,38 @@ insert into Order_Detail values('B07YFCD354', 5, 5, 60, 20000);
 insert into Order_Detail values('B01IQN17A4', 6, 6, 5, 39500);
 select * from Order_Detail;
 
+# Select Query
+## select involving one/more conditions in Where Clause 
+## Q: Which ASIN is from Cable Master?
+select ASIN from Amazon_Order A inner join Store S
+on A.store_id = S.store_id 
+where store_name  = "Cable Master";
+
+## select with aggregate functions (i.e., SUM,MIN,MAX,AVG,COUNT)
+## Q: Look at the average sales for each store.
+select store_name, round(avg(sales), 2) from Employee E inner join Store S
+on E.store_id = S.store_id
+group by E.store_id;
+
+## select with Having, Group By, Order By clause
+## Q: I would like to confirm that the order status has shipped more than three orders.
+select status, count(*) from Amazon_Order
+group by status
+having count(*) > 2;
+
+## Nested Select
+## Q: Find the ASINs which is from the Mars office.
+select ASIN from Amazon_Order where employee_id in (
+	select employee_id from Employee where employee_id like "MARS%");
+
+# select involving the Union operation
+## Q: find all store ID in the database.
+(select store_id from Employee)
+union
+(select store_id from Store)
+union
+(select store_id from Amazon_Order);
+
+# Insert Query
+## insert one tuple into a table (for 2 tables, just add 3 records for each table)
 
