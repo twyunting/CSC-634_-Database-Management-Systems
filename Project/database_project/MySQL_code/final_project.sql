@@ -1,9 +1,10 @@
+############################################# CREATE DB ############################################################
 create database if not exists ecomDB;
 use ecomDB;
-
-# Create Store entity
+############################################# CREATE TABLE #########################################################
+# create a Store entity
 create table if not exists Store (
-store_id int not null AUTO_INCREMENT primary key,
+store_id int not null primary key,
 store_name varchar(50) not null,
 phone varchar(20),
 country varchar(20),
@@ -12,17 +13,80 @@ address varchar(100),
 zipcode int
 );
 
-# Create Employee entity
+# create a Employee entity
 create table if not exists Employee (
-employee_id int not null AUTO_INCREMENT primary key,
+employee_id varchar(20) not null primary key,
 first_name varchar(20) not null,
 last_name varchar(20) not null,
-manager_id int,
+manager_id varchar(20),
 store_id int,
 sales int,
 phone varchar(20),
 email varchar(100) not null unique,
-foreign key (manager_id) references Employee (store_id), 
+foreign key (manager_id) references Employee (employee_id), 
 foreign key (store_id) references Store (store_id)
 );
+
+# create a Amazon_Order entity
+create table if not exists Amazon_Order (
+ASIN varchar(50) not null primary key,
+customer_id int,
+employee_id varchar(20),
+store_id int,
+order_date date,
+delivery_date date,
+status varchar(50),
+foreign key (employee_id) references Employee (employee_id), 
+foreign key (store_id) references Store (store_id) 
 );
+
+# create a Order_Detail entity
+create table if not exists Order_Detail (
+ASIN varchar(50) not null,
+order_id int not null,
+product_id int,
+qty_order double,
+subtotal double, 
+PRIMARY KEY (ASIN, order_id) 
+);
+
+############################################# PPOPLATING THE TABLES #########################################################
+# Store
+insert into Store values(1, 'Cable Master', '(617)-3332634', 'USA', 'Washingtion DC', '4400 Massachusetts Ave NW, Washington, DC 20016', 20006);
+insert into Store values(2, 'CC Connector', '(520)-1234567', 'USA', 'New York City', '20 W 34th St, New York, NY 10001', 10001);
+insert into Store values(3, 'Nerdy Computer', '(123)-6969453', 'USA', 'San Francisco', '5630 Bay St, Emeryville, CA 94608', 94608);
+insert into Store values(4, 'HD DVD King', '(781)-4226358', 'USA', 'Las Vegas', '3400 S Las Vegas Blvd, Las Vegas, NV 89109', 89109);
+insert into Store values(5, 'Music You And Me', '(513)-4234567', 'Canada', 'Laval', '3003 Boulevard le Carrefour, Laval, QC H7T 1C7', 12345);
+insert into Store values(6, 'Super Drone', '(202)-4995340', 'USA', 'Boston', '150 Morrissey Blvd, Boston, MA 02125', 02125);
+select * from Store;
+
+
+# Employee
+insert into Employee values('HQ001', 'Yunting', 'Chiu', NULL,  001, 3000, '(426)-888-9453', 'yc6705a@american.edu');
+insert into Employee values('HQ002', 'Yi', 'Ma', 'HQ001', 002, 50000, '(123)-456-7890', 'yimama@georgetown.edu');
+insert into Employee values('HQ003', 'Vitalik', 'Buterin', 'HQ001', 003, 70000, '(113)-456-7330', 'etherum@google.com');
+insert into Employee values('HQ004', 'Tracey', 'Brown', 'HQ002', 003, 60000, '(223)-439-2267', 'ada@yahoo.com');
+insert into Employee values('MARS001', 'Elon', 'Musk', 'HQ001', 001, 9000000, '(998)-426-6969', 'mars@tesla.com');
+insert into Employee values('MARS002', 'Andrew', 'Wang', 'MARS001', 002, 48850, '(784)-345-3926', 'wonderful@spacex.com');
+select * from Employee;
+
+# Amazon_Order
+insert into Amazon_Order values('B014I8T0YQ', 1, 'HQ001', 1, '2018-06-20', '2018-06-23', 'Shipped');
+insert into Amazon_Order values('BB07TVK1V59', 1, 'HQ001', 1, '2018-06-20', '2018-06-22', 'Shipped');
+insert into Amazon_Order values('B093PQMWHF', 2, 'MARS001', 3, '2019-03-05', '2019-03-30', 'Shipped');
+insert into Amazon_Order values('B094QQMWHF', 3, 'MARS001', 3, '2021-06-16', '2021-07-25', 'Unshipped');
+insert into Amazon_Order values('B07YFCD354', 4, 'HQ002', 2, '2020-05-18', '2020-05-22', 'Shipped');
+insert into Amazon_Order values('B01IQN17A4', 5, 'HQ003', 2, '2021-06-15', '2025-05-12', 'Unshipped');
+select * from Amazon_Order;
+
+
+# Order_Detail
+insert into Order_Detail values('B014I8T0YQ', 1, 1, 40, 3400);
+insert into Order_Detail values('BB07TVK1V59', 2, 2, 30, 6000);
+insert into Order_Detail values('B093PQMWHF', 3, 3, 100, 40000);
+insert into Order_Detail values('B094QQMWHF', 4, 4, 50, 4000);
+insert into Order_Detail values('B07YFCD354', 5, 5, 60, 20000);
+insert into Order_Detail values('B01IQN17A4', 6, 6, 5, 39500);
+select * from Order_Detail;
+
+
