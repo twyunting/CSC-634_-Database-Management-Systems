@@ -453,7 +453,7 @@ B094QQMWHF	4	4	50	4000\
 BB07TVK1V59	0\			
 BB07TVK1V59	2	2	30	6000\
 
-## After the Query
+### After the Query
 
     insert into Order_Detail (ASIN)
     select ASIN from Amazon_Order
@@ -461,6 +461,143 @@ BB07TVK1V59	2	2	30	6000\
 
 0 row(s) affected Records, but the code can be executed.
 
+# Delete Query
 
+## Delete one tuple or a set of tuples: from one table, from multiple tables.
+
+### From One Table
+
+*Q: Remove the store name that is not in the United States.*
+
+### Before the Query
+
+**store_name	country**\
+Cable Master	USA\
+CC Connector	USA\
+Nerdy Computer	USA\
+HD DVD King	USA\
+Music You And Me	Canada\
+Super Drone	USA\
+
+### After the Query
+
+    delete from Store
+    where country != "USA";
+    select store_name, country from Store; 
+    
+**store_name	country**\
+Cable Master	USA\
+CC Connector	USA\
+Nerdy Computer	USA\
+HD DVD King	USA\
+Super Drone	USA\
+
+### From Multiple Tables
+
+*Q: Cancel ASINs in Amazon_Order with subtotals less than 3000.*
+
+### Before the Query
+
+**ASIN**\
+B00BAXRQ3K\
+B0741WGQ23\
+B0741WGQ36\
+B014I8T0YQ\
+BB07TVK1V59\
+B01IQN17A4\
+B07YFCD354\
+B093PQMWHF\
+B094QQMWHF\
+
+### After the Query
+
+    delete from Amazon_Order
+    where ASIN in (select ASIN from Order_Detail where subtotal < 3000);
+    select ASIN from Amazon_Order;
+
+**ASIN**\
+B00BAXRQ3K\
+B0741WGQ23\
+B0741WGQ36\
+BB07TVK1V59\
+B01IQN17A4\
+B07YFCD354\
+B093PQMWHF\
+B094QQMWHF\
+
+# Update Query
+
+## Update one tuple or a set of tuples: from one table, from multiple tables
+
+### From One Rable
+*Q: Update the country name from USA to United States*
+
+### Before the Query
+
+**store_name	country**\
+Cable Master	USA\
+CC Connector	USA\
+Nerdy Computer	USA\
+HD DVD King	USA\
+Super Drone	USA\
+
+### After the Query
+    
+    update Store
+    set country = "United States"
+    where country = "USA";
+    select store_name, country from Store;
+
+**store_name	country**\
+Cable Master	United States\
+CC Connector	United States\
+Nerdy Computer	United States\
+HD DVD King	United States\
+Super Drone	United States\
+
+
+### From Multiple Tables
+
+*Q: Increase the balance of each order by 20% if the shipping status is still unshipped.*
+
+### Before the Query
+
+**ASIN	order_id	product_id	qty_order	subtotal**\
+B014I8T0YQ	1	1	40	3400\
+B014I8T0YQ	6	1	20	1700\
+B014I8T0YQ	7	1	10	850\
+B01IQN17A4	6	6	5	  39500\
+B07YFCD354	5	5	60	20000\
+B093PQMWHF	3	3	100	40000\
+B094QQMWHF	4	4	50	4000\
+BB07TVK1V59	2	2	30	6000\
+
+### After the Query
+
+    update Order_Detail
+    set subtotal = round(subtotal * 1.2, 2) 
+    where ASIN in (select ASIN from Amazon_Order where status = "Unshipped");
+    select * from Order_Detail where qty_order is not null;
+
+**ASIN	order_id	product_id	qty_order	subtotal**\
+B014I8T0YQ	1	1	40	3400\
+B014I8T0YQ	6	1	20	1700\
+B014I8T0YQ	7	1	10	850\
+B01IQN17A4	6	6	5	  47400\
+B07YFCD354	5	5	60	20000\
+B093PQMWHF	3	3	100	40000\
+B094QQMWHF	4	4	50	4800\
+BB07TVK1V59	2	2	30	6000\
+
+# View Query
+
+## One Relation with Operators
+### Before the Query
+### After the Query
+
+
+## Multiple Relations with Operators
+### Before the Query
+### After the Query
 
 

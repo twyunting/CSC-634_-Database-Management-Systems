@@ -103,10 +103,11 @@ on E.store_id = S.store_id
 group by E.store_id;
 
 ## select with Having, Group By, Order By clause
-## Q: I would like to confirm that the order status has shipped more than three orders.
+## Q: I would like to confirm that the order status has shipped more than one order.
 select status, count(*) as cnt from Amazon_Order
 group by status
-having count(*) > 2;
+having count(*) > 1
+order by count(*) desc;
 
 ## Nested Select
 ## Q: Find the ASINs which is from the Mars office.
@@ -149,10 +150,36 @@ where ASIN like "B%";
 select * from Order_Detail;
 
 ## insert involving two tables
-INSERT INTO Employee (first_name, last_name) 
-SELECT Store.store_name, Order_Detail.ASIN 
-FROM Store, Order_Detail 
-WHERE Store.store_name = 'Nerdy Computer'
-AND Order_Detail.ASIN = 'B093PQMWHF';
+insert into Order_Detail (ASIN)
+select ASIN from Amazon_Order
+where ASIN in (select ASIN from Order_Detail where subtotal < 800);
+select * from Order_Detail;
 
-select first_name, last_name from Employee;
+# Delete Query
+## One table
+delete from Store
+where country != "USA";
+select store_name, country from Store; 
+
+## Multiple tables
+delete from Amazon_Order
+where ASIN in (select ASIN from Order_Detail where subtotal < 3000);
+select ASIN from Amazon_Order;
+# select * from Order_Detail;
+
+# Update Query
+
+## One table
+update Store
+set country = "United States"
+where country = "USA";
+select store_name, country from Store;
+
+## Multiple Tables
+### Increase the balance of each order by 20% if the shipping status is still unshipped.
+update Order_Detail
+set subtotal = round(subtotal * 1.2, 2) 
+where ASIN in (select ASIN from Amazon_Order where status = "Unshipped");
+select * from Order_Detail where qty_order is not null;
+
+# View Query
