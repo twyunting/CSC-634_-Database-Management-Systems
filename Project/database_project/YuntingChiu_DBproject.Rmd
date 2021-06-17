@@ -222,7 +222,7 @@ BB07TVK1V59	2	2	30	6000\
 
 
 # Select Query
-1. select involving one/more conditions in Where Clause 
+## select involving one/more conditions in Where Clause 
 
 *Q: Which ASIN is from Cable Master?*
 
@@ -234,7 +234,7 @@ BB07TVK1V59	2	2	30	6000\
 B014I8T0YQ\
 BB07TVK1V59\
 
-2. select with aggregate functions (i.e., SUM,MIN,MAX,AVG,COUNT)
+## select with aggregate functions (i.e., SUM,MIN,MAX,AVG,COUNT)
 
 *Q: Look at the average sales for each store.*
 
@@ -247,18 +247,21 @@ Cable Master	4501500.00\
 CC Connector	49425.00\
 Nerdy Computer	65000.00\
 
-3. select with Having, Group By, Order By clause
+## select with Having, Group By, Order By clause
 
-*Q: I would like to confirm that the order status has shipped more than three orders.*
+*Q: I would like to confirm that the order status has shipped more than one order.*
 
     select status, count(*) as cnt from Amazon_Order
     group by status
-    having count(*) > 2;
+    having count(*) > 1
+    order by count(*) desc;
 
 **status	cnt**\
 Shipped	4\
+Unshipped	2\
 
-4. Nested Select
+
+## Nested Select
 
 *Q: Find the ASINs which is from the Mars office.*
     
@@ -269,7 +272,7 @@ Shipped	4\
 B093PQMWHF\
 B094QQMWHF\
 
-5. select involving the Union operation
+## select involving the Union operation
 
 *Q: find all store ID in the database.*
     
@@ -287,6 +290,176 @@ B094QQMWHF\
 5\
 6\
 
+
+# Insert Query
+
+## Insert one tuple into a table (for 2 tables, just add 3 records for each table)
+
+*Q: insert three tuples into a Order_Detail table*
+
+### Before the query
+
+**ASIN**\
+B01IQN17A4\
+B07YFCD354\
+B093PQMWHF\
+B094QQMWHF\
+BB07TVK1V59\
+
+### After the query
+
+    insert into Order_Detail values('B014I8T0YQ', 6, 1, 20, 1700);
+    insert into Order_Detail values('B014I8T0YQ', 7, 1, 10, 850);
+    insert into Order_Detail values('B014I8T0YQ', 8, 1, 40, 3400);
+    select ASIN from Order_Detail;
+
+**ASIN**\
+B014I8T0YQ\
+B014I8T0YQ\
+B014I8T0YQ\
+B01IQN17A4\
+B07YFCD354\
+B093PQMWHF\
+B094QQMWHF\
+BB07TVK1V59\
+
+*Q: insert three tuples into a Employee table*
+
+### Before the Query
+
+**first_name	last_name**\
+Yunting	Chiu\
+Yi	Ma\
+Vitalik	Buterin\
+Tracey	Brown\
+Elon	Musk\
+Andrew	Wang\
+
+### After the Query
+
+    insert into Employee values('HQ005', 'Doge', 'Brown', 
+    'HQ002',  003, 70000, '(858)-838-9123', 'dogetothemoon@american.edu');
+    insert into Employee values('HQ006', 'Barry', 'Smith', 
+    ''HQ001', 001, 45000, '(432)-456-7890', 'noschool@lol.edu');
+    insert into Employee values('Earth', 'Mother', 'Ground', 
+    'HQ001', 002, 58990, '(222)-333-8888', 'googleearth@apple.com');
+    select first_name, last_name from Employee;
+    
+**first_name	last_name**\
+Mother	Ground\
+Yunting	Chiu\
+Yi	Ma\
+Vitalik	Buterin\
+Tracey	Brown\
+Doge	Brown\
+Barry	Smith\
+Elon	Musk\
+Andrew	Wang\
+
+*Q: insert three tuples with a specific attribute*
+
+### Before the Query
+
+**ASIN	customer_id	employee_id	store_id	order_date	delivery_date	status**\
+B014I8T0YQ	1	HQ001	1	2018-06-20	2018-06-23	Shipped\
+B01IQN17A4	5	HQ003	2	2021-06-15	2025-05-12	Unshipped\
+B07YFCD354	4	HQ002	2	2020-05-18	2020-05-22	Shipped\
+B093PQMWHF	2	MARS001	3	2019-03-05	2019-03-30	Shipped\
+B094QQMWHF	3	MARS001	3	2021-06-16	2021-07-25	Unshipped\
+BB07TVK1V59	1	HQ001	1	2018-06-20	2018-06-22	Shipped\
+
+### After the Query
+
+    Insert into Amazon_Order (ASIN) values ('B0741WGQ36');
+    Insert into Amazon_Order (ASIN) values ('B0741WGQ23');
+    Insert into Amazon_Order (ASIN) values ('B00BAXRQ3K');
+    select * from Amazon_Order;
+
+**ASIN	customer_id	employee_id	store_id	order_date	delivery_date	status**\  
+B00BAXRQ3K\						
+B014I8T0YQ	1	HQ001	1	2018-06-20	2018-06-23	Shipped\
+B01IQN17A4	5	HQ003	2	2021-06-15	2025-05-12	Unshipped\
+B0741WGQ23\						
+B0741WGQ36\						
+B07YFCD354	4	HQ002	2	2020-05-18	2020-05-22	Shipped\
+B093PQMWHF	2	MARS001	3	2019-03-05	2019-03-30	Shipped\
+B094QQMWHF	3	MARS001	3	2021-06-16	2021-07-25	Unshipped\
+BB07TVK1V59	1	HQ001	1	2018-06-20	2018-06-22	Shipped\
+
+## Insert a set of tuples (by using another select statement)
+
+*Q: insert the ASIN to Order_Detail from Amazon_Order which ASIN start with "B".*
+
+### Before the Query
+
+**ASIN	order_id	product_id	qty_order	subtotal**
+B014I8T0YQ	1	1	40	3400\
+B014I8T0YQ	6	1	20	1700\
+B014I8T0YQ	7	1	10	850\
+B01IQN17A4	6	6	5	39500\
+B07YFCD354	5	5	60	20000\
+B093PQMWHF	3	3	100	40000\
+B094QQMWHF	4	4	50	4000\
+BB07TVK1V59	2	2	30	6000\
+
+### After the Query
+    
+    insert into Order_Detail (ASIN)
+    select ASIN from Amazon_Order
+    where ASIN like "B%";
+    select * from Order_Detail;
+
+**ASIN	order_id	product_id	qty_order	subtotal**\
+B00BAXRQ3K	0\			
+B014I8T0YQ	0\			
+B014I8T0YQ	1	1	40	3400\
+B014I8T0YQ	6	1	20	1700\
+B014I8T0YQ	7	1	10	850\
+B01IQN17A4	0\		
+B01IQN17A4	6	6	5	39500\
+B0741WGQ23	0\		
+B0741WGQ36	0\		
+B07YFCD354	0\			
+B07YFCD354	5	5	60	20000\
+B093PQMWHF	0\			
+B093PQMWHF	3	3	100	40000\
+B094QQMWHF	0\			
+B094QQMWHF	4	4	50	4000\
+BB07TVK1V59	0\			
+BB07TVK1V59	2	2	30	6000\
+
+## Insert involving two tables
+
+### Before the Query
+
+*Q: Insert the ASIN to Order_Detail from Amazon_Order which ASIN in Order_Detail is less than 800.*
+
+**ASIN	order_id	product_id	qty_order	subtotal**\
+B00BAXRQ3K	0\			
+B014I8T0YQ	0\			
+B014I8T0YQ	1	1	40	3400\
+B014I8T0YQ	6	1	20	1700\
+B014I8T0YQ	7	1	10	850\
+B01IQN17A4	0\		
+B01IQN17A4	6	6	5	39500\
+B0741WGQ23	0\		
+B0741WGQ36	0\		
+B07YFCD354	0\			
+B07YFCD354	5	5	60	20000\
+B093PQMWHF	0\			
+B093PQMWHF	3	3	100	40000\
+B094QQMWHF	0\			
+B094QQMWHF	4	4	50	4000\
+BB07TVK1V59	0\			
+BB07TVK1V59	2	2	30	6000\
+
+## After the Query
+
+    insert into Order_Detail (ASIN)
+    select ASIN from Amazon_Order
+    where ASIN in (select ASIN from Order_Detail where subtotal < 800);
+
+0 row(s) affected Records, but the code can be executed.
 
 
 

@@ -98,13 +98,13 @@ where store_name  = "Cable Master";
 
 ## select with aggregate functions (i.e., SUM,MIN,MAX,AVG,COUNT)
 ## Q: Look at the average sales for each store.
-select store_name, round(avg(sales), 2) from Employee E inner join Store S
+select store_name, round(avg(sales), 2) as avgSales from Employee E inner join Store S
 on E.store_id = S.store_id
 group by E.store_id;
 
 ## select with Having, Group By, Order By clause
 ## Q: I would like to confirm that the order status has shipped more than three orders.
-select status, count(*) from Amazon_Order
+select status, count(*) as cnt from Amazon_Order
 group by status
 having count(*) > 2;
 
@@ -123,4 +123,36 @@ union
 
 # Insert Query
 ## insert one tuple into a table (for 2 tables, just add 3 records for each table)
+## Q: insert three tuples into a Order_Detail table
+insert into Order_Detail values('B014I8T0YQ', 6, 1, 20, 1700);
+insert into Order_Detail values('B014I8T0YQ', 7, 1, 10, 850);
+insert into Order_Detail values('B014I8T0YQ', 8, 1, 40, 3400);
+select ASIN from Order_Detail;
 
+## Q: insert three tuples into a Employee table
+insert into Employee values('HQ005', 'Doge', 'Brown', 'HQ002',  003, 70000, '(858)-838-9123', 'dogetothemoon@american.edu');
+insert into Employee values('HQ006', 'Barry', 'Smith', 'HQ001', 001, 45000, '(432)-456-7890', 'noschool@lol.edu');
+insert into Employee values('Earth', 'Mother', 'Ground', 'HQ001', 002, 58990, '(222)-333-8888', 'googleearth@apple.com');
+select first_name, last_name from Employee;
+
+## Q: insert three tuples with a specific attribute
+Insert into Amazon_Order (ASIN) values ('B0741WGQ36');
+Insert into Amazon_Order (ASIN) values ('B0741WGQ23');
+Insert into Amazon_Order (ASIN) values ('B00BAXRQ3K');
+select * from Amazon_Order;
+
+## insert a set of tuples (by using another select statement)
+## Q: insert the ASIN to Order_Detail from Amazon_Order which ASIN start with "B".
+insert into Order_Detail (ASIN)
+select ASIN from Amazon_Order
+where ASIN like "B%";
+select * from Order_Detail;
+
+## insert involving two tables
+INSERT INTO Employee (first_name, last_name) 
+SELECT Store.store_name, Order_Detail.ASIN 
+FROM Store, Order_Detail 
+WHERE Store.store_name = 'Nerdy Computer'
+AND Order_Detail.ASIN = 'B093PQMWHF';
+
+select first_name, last_name from Employee;
