@@ -22,9 +22,9 @@ manager_id varchar(20),
 store_id int,
 sales int,
 phone varchar(20),
-email varchar(100) not null unique,
-foreign key (manager_id) references Employee (employee_id), 
-foreign key (store_id) references Store (store_id)
+email varchar(100) not null unique
+#foreign key (manager_id) references Employee (employee_id) 
+#foreign key (store_id) references Store (store_id)
 );
 
 # create a Amazon_Order entity
@@ -184,6 +184,12 @@ select * from Order_Detail where qty_order is not null;
 
 # View Query
 ## One Relation with Operators
+create view AUspy as 
+select * from Employee;
+update AUspy
+set first_name = "AU SPY"
+where email like "%american%";
+select first_name, email from AUspy;
 
 ## Multiple Relations with Operators
 create view threeTables as
@@ -191,3 +197,76 @@ select E.first_name, E.last_name from Store S
 inner join Employee E on S.store_id = E.store_id
 inner join Amazon_Order A on A.employee_id = E.employee_id;
 select * from threeTables;
+
+############################################################################################################
+
+# Database Trigger
+## Creating Database Log
+Create table logMessage (message varchar(100));
+Delimiter $$
+create trigger add_store after insert on Store
+for each row
+begin
+insert into logMessage values(concat('The store has been added by ',current_user(), ' ',
+new.store_name, ' on ',current_date()));
+end;
+
+insert into Store values(7, 'Cheating Cups', '(335)-5643389', 'USA', 'Bethesda', '4903 Edgemoor Ln., Bethesda, MD 20814', 20814);
+select store_name from Store;
+select * from logMessage;
+
+## Gathering Statistics
+### When a new employee is added to the database, the system should calculate a new store income table for each store.
+create table store_income (store_id int, min_sales double, max_sales double, avg_sales double);
+Delimiter $$
+
+create trigger store_income_insert after insert on Employee
+for each row
+begin
+delete from store_income;
+insert store_income
+select store_id, min(sales), max(sales), avg(sales) from Employee group by store_id;
+end;
+$$
+
+insert into Employee values('HQ007', 'David', 'Good', "HQ003",  001, 60000, '(426)-888-9453', '123@american.edu');
+insert into Employee values('HQ008', 'Catie', 'Lover', 'HQ001', 002, 20000, '(123)-456-7890', '34@georgetown.edu');
+insert into Employee values('HQ009', 'Ice', 'Burg', "HQ004",  001, 300000, '(426)-888-9453', '334@american.edu');
+insert into Employee values('HQ010', 'Yolo', 'Brown', "HQ005",  006, 40000, '(426)-888-9453', '556@american.edu');
+insert into Employee values('MARS005', 'Queens', 'Washington', 'MARS001', 003, 50000, '(123)-456-7890', '678@georgetown.edu');
+select first_name, last_name, store_id, sales from Employee;
+select * from store_income;
+
+## Enforcing Referential Integrity
+## Cancel the store income table with the specific store once the Store id has been removed. Because this store has been closed.
+Delimiter $$
+create trigger bye_store_count after delete on Employee
+for each row
+begin
+delete from store_income where store_id = old.store_id;
+end;
+$$
+
+delete from Employee where store_id = 3;
+select * from Employee;
+select * from store_income;
+
+## Enforcing Business Rule
+### The order's subtotal cannot be a negative value.
+
+create table Account(AccountType varchar(10), AccountNo varchar(10), Customer
+varchar(20), Balance decimal(12,2));
+
+Delimiter $$
+create trigger subtotal_rule before insert on Order_Detail
+for each row
+begin
+if new.subtotal < 0 then
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Subtotal cannot be a negative value';
+end if;
+end;
+$$
+
+insert into Order_Detail values('B014I8T0YQ', 1, 1, 40, 3400);
+insert into Order_Detail values('BB07TVK1V59', 2, 2, 30, 6000);
+select * from Order_Detail;
