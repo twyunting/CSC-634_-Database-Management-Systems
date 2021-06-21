@@ -253,10 +253,6 @@ select * from store_income;
 
 ## Enforcing Business Rule
 ### The order's subtotal cannot be a negative value.
-
-create table Account(AccountType varchar(10), AccountNo varchar(10), Customer
-varchar(20), Balance decimal(12,2));
-
 Delimiter $$
 create trigger subtotal_rule before insert on Order_Detail
 for each row
@@ -267,6 +263,6 @@ end if;
 end;
 $$
 
-insert into Order_Detail values('B014I8T0YQ', 1, 1, 40, 3400);
-insert into Order_Detail values('BB07TVK1V59', 2, 2, 30, 6000);
+insert into Order_Detail values('B01L1DJDPM', 10, 9, 45, 27000);
+insert into Order_Detail values('B07VL69TGB', 12, 10, 5, -200);
 select * from Order_Detail;

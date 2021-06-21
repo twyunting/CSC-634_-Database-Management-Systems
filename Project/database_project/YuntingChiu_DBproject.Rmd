@@ -1,5 +1,5 @@
 ---
-title: "DB"
+title: "Amazon Seller Database Management System"
 author: "Yunting Chiu"
 date: "`r Sys.Date()`"
 output:
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # 1. Design Purpose
-As consumer behavior shifts during the COVID pandemic, new roles in e-commerce emerge. Many businesses began to market their products online in order to meet the needs of their customers. Because Amazon has the world's largest ecommerce platform, many retailers want to sell their products through the Amazon online store. But how do they manage their product and keep their budget under control? The goal of an ecommerce company database management system is to assist every retailer in selling their products through Amazon platform.
+As consumer behavior shifts during the COVID pandemic, new roles in e-commerce emerge. Many businesses began to market their products online in order to meet the needs of their customers. Because Amazon has the world's largest ecommerce platform, many retailers want to sell their products through Amazon online store. But how do they manage their product and keep their budget under control? The goal of Amazon Seller Database Management System is to assist every retailer in selling their products through Amazon platform.
 
 1. Define the information content of your database.
 
@@ -41,49 +41,110 @@ Attributes: Please see the following **ER diagram** for more information. That i
 - `Amazon_Order` and `Employee` have an **M-1** relationship because one employee can manage multiple ASINs.
 
 # 2. Constraints
-(c)-Define a set of constraints that may be imposed on data.
+
+(c) Define a set of constraints that may be imposed on data.
 
 - **Not null and primary key constraints**: The primary key of each entity cannot have a null value. It prevents null values from being entered into one or more columns within a table. On the following SQL sessions, I will show how to create tables with constraints that the primary key has no null value.
 
 - **Foreign key constraint**: It constraint states that the key can only contain values from the referenced main key, ensuring the referential integrity of data linked by the two keys. For instance, set `foreign key (store_id) references Store (store_id)` as a foreign key constraint when you create a table.
 
-2. Define an E-R Diagram for your database design.
 
 # 3. Entity Relationship Diagram (ERD) 
 
+2. Define an E-R Diagram for your database design.
+
 ![](pics/ERD.jpg)
 
-# 4. Database Normalization
+# 4. Relational Schema
 
 3. Define a relational schema for your database design. Make sure that you have both one-to-many and many-to-many associations.
 
+- `Transaction_Income` (**checking_id**, **customer_id**, payment_amount, payment_date, payment_status)
+- `Customer` (**customer_id**, first_name, last_name, phone, email, country, city, address, zipcode)
+- `Amazon_Order` (**ASIN**, customer_id, employee_id, store_id, order_date, delivery_date, status)
+- `Employee` (**employee_id, first_name, ;last_name, manager_id, store_id, sales, phone, email)
+- `Store` (**store_id**, store_name, phone, country, city, address, zipcode)
+- `Order_Detail` (**ASIN**, **order_id**, product_id, qty_order, subtotal)
+- `Category` (**category_id**, category_name, description)
+- `Product` (**product_id**, product_name, manufacturer_id, category_id, product_price, qty_in_stock)
+- `Stock` (**product_id**, **store_id**, qty)
+- `Transaction_Expenditure` (**checking_id**, **manufacturer_id**, payment_amount, payment_date, payment_status)
+- `Manufacturer` (**manufacturer_id**, manufacturer_name)
+
+![](pics/RS.png)
+
+
+# 5. Database Normalization and Functional Dependency
+
 (a) Define one or more realistic key(s) for every relation scheme. Use both simple and composite keys.
 
-`Order_detai`l and `Stock` have composite keys, while the rest of the entities use a simple key as their primary key. Additionally, `Employee` has a foreigner key that is included in its entity.
+- In the ER diagram `Order_detail`, `Transaction_Expenditure`, `Transaction_Income` and `Stock` have composite keys, while the rest of the entities use a simple key as their primary key. Additionally, `Employee` has a foreigner key that is included in its entity.
 
 (b) Define a realistic set of Functional / Multi-Valued Dependencies (when appropriate) for every
 relation scheme.
 
 (c) Check whether your relational schema is in 2NF, 3NF, BCNF, 4NF.
 
+For (b) and (c), I will take `Transaction_Expenditure`, `Category`, `Manufacturer`. and `Product` as examples.
 
-(d) Put your relational schema in the highest normal form that is possible. Note that, every relation scheme should be in a specific normal form in order to have the relational schema in that normal form.
+## Transaction_Expenditure
 
+checking_id, manufacturer_id -> payment_amount\
+checking_id, manufacturer_id -> payment_date\
+checking_id, manufacturer_id -> payment_status\
+
+- To increase the NF of `Manufacturer` in the ER diagram, I add a new branch called `Transaction_Expenditure`. 
+- `Transaction_Expenditure`: No M/V attributes, therefore at least 1NF. No partial dependencies, therefore at least 2NF. No transitive dependencies, therefore at least 3NF. No multiple sets of multivalues dependencies, therefore at least 4NF. 
+- Conclusion: The relation is in 4NF.
+
+## Manufacturer
+
+manufacturer_id -> manufacturer_name
+
+- `Manufacturer`: No M/V attributes, therefore at least 1NF. No partial dependencies, therefore at least 2NF. No transitive dependencies, therefore at least 3NF. No multiple sets of multivalues dependencies, therefore at least 4NF.
+- We successfully increase the number of normal form in `Manufacturer` entity.
+- Conclusion: The relation is in 4NF.
+
+## Category
+
+category_id -> category_name\
+category_id -> description\
+category_name -> description\
+
+- `Category`: No M/V attributes, therefore at least 1NF. However, it is not in 2NF, there is a partial dependency of *description* on *category_name*.
+- Conclusion: The relation is in 1NF.
+
+## Product
+product_id -> product_name\
+product_id -> manufacturer_id\
+product_id -> catgory_id\
+product_id -> product_price\
+product_id -> qty_in_stock\
+product_name -> product_price\
+product_name -> qty_in_stock\
+
+
+- `Product`: No M/V attributes, therefore at least 1NF. However, it is not in 2NF, there is partial dependencies: *product_price* depends on *product_name* or *product_id*, and *qty_in_stock* depends on *product_name* or *product_id*.
+- Conclusion: The relation is in 1NF.
+
+(d) Put your relational schema in the highest normal form that is possible. Note that, every relation scheme should be in a specific normal form in order to have the relational schema in that normal form.\
 NOTE: Please provide a detailed explanation for every question when appropriate. 
+
+I have put each relational schema in its highest normal form, as well as considered appropriate relationships and dependencies for each relation scheme to make a most similarity in reality.
 
 4. Implementation: Create your database using MySQL, or… to Perform the following operations. Create 4 tables from your database project that are connected/linked together and insert few dummy records
 into these tables. **Then use these tables to answer the following queries**.
 
 (A) You are required to execute SQL queries that include the following operations. For each query, provide the SQL statements along with the output. For each of the following, try different SQL statements (i.e., using one relation, more than one relations,...)
 
-I'm going to create four tables: Employee, Store, Order_Detail, and Amazon_Order with 6 tuples in each entity.
+I'm going to create four tables by using SQL: `Employee`, `Store`, `Order_Detail`, and `Amazon_Order` with 6 tuples in each entity.
 
-# 5. Create a Database (MySQL)
+# 6. Create a Database in MySQL Workbench
 
     create database if not exists ecomDB;
     use ecomDB;
   
-# 6. Create Tables
+# 7. Create Tables
 ## Store Entity
 
     create table if not exists Store (
@@ -136,7 +197,7 @@ I'm going to create four tables: Employee, Store, Order_Detail, and Amazon_Order
     PRIMARY KEY (ASIN, order_id) 
     );
     
-# 7. Populating the Tables
+# 8. Populating the Tables
 ## Store
 
     insert into Store values(1, 'Cable Master', '(617)-3332634',
@@ -229,7 +290,7 @@ B094QQMWHF	4	4	50	4000\
 BB07TVK1V59	2	2	30	6000\
 
 
-# 8. Select Query
+# 9. Select Query
 ## select involving one/more conditions in Where Clause 
 
 *Q: Which ASIN is from Cable Master?*
@@ -299,7 +360,7 @@ B094QQMWHF\
 6\
 
 
-# 9. Insert Query
+# 10. Insert Query
 
 ## Insert one tuple into a table (for 2 tables, just add 3 records for each table)
 
@@ -469,7 +530,7 @@ BB07TVK1V59	2	2	30	6000\
 
 0 row(s) affected Records, but the code can be executed.
 
-# 10. Delete Query
+# 11. Delete Query
 
 ## Delete one tuple or a set of tuples: from one table, from multiple tables.
 
@@ -533,7 +594,7 @@ B07YFCD354\
 B093PQMWHF\
 B094QQMWHF\
 
-# 11. Update Query
+# 12. Update Query
 
 ## Update one tuple or a set of tuples: from one table, from multiple tables
 
@@ -597,7 +658,7 @@ B093PQMWHF	3	3	100	40000\
 B094QQMWHF	4	4	50	4800\
 BB07TVK1V59	2	2	30	6000\
 
-# 12. View Query
+# 13. View Query
 
 ## One Relation with Operators
 
@@ -635,7 +696,7 @@ Vitalik	Buterin\
 Elon	Musk\
 Elon	Musk\
 
-# 13. Database Trigger
+# 14. Database Trigger
 
 ## Enforcing Business Rule
 
